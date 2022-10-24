@@ -1,34 +1,33 @@
 import React from "react";
+import { useState, useEffect } from "react";
 
-export default function Quotable() {
-  const [data, setData] = React.useState(null);
+export default function App() {
+  document.title = "Random Quote";
+
+  const [data, setData] = useState({
+    content: "This is a loading quote message, amazing no?",
+  });
 
   async function updateQuote() {
-    document.title = 'Random Quote';
     try {
       const response = await fetch("https://api.quotable.io/random");
-      const { statusCode, statusMessage, ...data } = await response.json();
-      if (!response.ok) throw new Error(`${statusCode} ${statusMessage}`);
+      const data = await response.json();
       setData(data);
     } catch (error) {
-      console.error(error);
       setData({ content: "Opps... Something went wrong." });
     }
   }
 
-  React.useEffect(() => {
+  // llamo a que genete updatequote una vez que se inicie
+  useEffect(() => {
     updateQuote();
   }, []);
-
-  if (!data) return null;
 
   return (
     <div className="App">
       <h2>"{data.content}"</h2>
       <p>{data.author}</p>
-      <span variant="primary" onClick={updateQuote}>
-        Generate a Random Quote
-      </span>
+      <span onClick={updateQuote}>Generate a Random Quote</span>
     </div>
   );
 }
